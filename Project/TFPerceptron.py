@@ -8,13 +8,19 @@ from tensorflow.examples.tutorials.mnist import input_data
 # trX, trY, teX, teY = mnist.train.images, mnist.train.labels, mnist.test.images, mnist.test.labels
 
 #首先读取数据
-data = pd.read_csv(r"C:\Users\maoyu\Desktop\predict2.csv" ,encoding="gb2312" )
+data = pd.read_excel(r"C:\Users\maoyu\Desktop\useforpredict.xls" ,encoding="gb2312" )
 
 #去掉一些不重要的列
+data.drop(['公司所属目录'],axis=1,inplace=True)
+data.drop(['公司状态'],axis=1,inplace=True)
+data.drop(['折扣'],axis=1,inplace=True)
+data.drop(['加强次数'],axis=1,inplace=True)
 data.drop(['注册金额'],axis=1,inplace=True)
+data.drop(['平均登录次数'],axis=1,inplace=True)
+data.drop(['销售联系次数'],axis=1,inplace=True)
 
 #这个一开始的想法是去掉公司ID为重复的项目，但是后来发现公司数据是连续的，所以去掉没什么卵子用
-data.drop_duplicates(['公司ID'] , inplace=True)
+#data.drop_duplicates(['公司ID'] , inplace=True)
 
 #去掉公司ID这个项
 data.drop(['公司ID'],axis=1,inplace=True)
@@ -22,6 +28,9 @@ data.drop(['公司ID'],axis=1,inplace=True)
 #为数据填充0
 data.fillna(0,inplace=True)
 
+data['销售人员服务等级'].replace('SSA',3)
+data['销售人员服务等级'].replace('SSB',2)
+data['销售人员服务等级'].replace(-1,1)
 #将部分列设置为onehot类型，这里将其放入onehotmatrix，并在原序列中去除
 onehotmatrix=pd.get_dummies(data['公司类型']).as_matrix()
 data.drop(['公司类型'],axis=1,inplace=True)
@@ -89,7 +98,7 @@ batch_size = 100
 display_step = 1
 
 # Network Parameters设定输入输出隐层节点数目
-n_hidden_1 = 15 # 1st layer number of features
+n_hidden_1 = 20 # 1st layer number of features
 n_hidden_2 = 15 # 2nd layer number of features
 n_input = tfdatatrainx.shape[1] # MNIST data input (img shape: 28*28)
 n_classes = tfdatatrainy.shape[1] # MNIST total classes (0-9 digits)
